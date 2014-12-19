@@ -1,0 +1,32 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:hrwpf" x:Class="hrwpf.MainWindow"
+        Title="MainWindow" Height="350" Width="576.315" Loaded="Window_Loaded">
+    <Window.Resources>
+        <local:hrDataSet x:Key="hrDataSet"/>
+        <CollectionViewSource x:Key="deptViewSource" Source="{Binding dept, Source={StaticResource hrDataSet}}"/>
+        <CollectionViewSource x:Key="empViewSource" Source="{Binding emp, Source={StaticResource hrDataSet}}"/>
+        <CollectionViewSource x:Key="vuempViewSource" Source="{Binding vuemp, Source={StaticResource hrDataSet}}"/>
+        <CollectionViewSource x:Key="deptvuempViewSource" Source="{Binding FK_dept_vuemp, Source={StaticResource deptViewSource}}"/>
+        <CollectionViewSource x:Key="deptempViewSource" Source="{Binding FK_emp_dept1, Source={StaticResource deptViewSource}}"/>
+    </Window.Resources>
+    <Grid DataContext="{StaticResource deptViewSource}">
+        <ListBox HorizontalAlignment="Left" Height="250" Margin="28,36,0,0" VerticalAlignment="Top" Width="172" SelectedValuePath="deptno" ItemsSource="{Binding}" DisplayMemberPath="deptname" />
+        <DataGrid x:Name="empDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding Source={StaticResource deptempViewSource}}" Margin="237,36,29,33" RowDetailsVisibilityMode="VisibleWhenSelected" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="empnoColumn" Binding="{Binding empno}" Header="empno" IsReadOnly="True" Width="SizeToHeader"/>
+                <DataGridTextColumn x:Name="empnameColumn" Binding="{Binding empname}" Header="empname" Width="SizeToHeader"/>
+                <DataGridTemplateColumn x:Name="deptnoColumn" Header="dept" Width="SizeToHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox DataContext="{StaticResource ResourceKey=hrDataSet}" ItemsSource="{Binding dept}" DisplayMemberPath="deptname" SelectedValuePath="deptno" SelectedValue="{Binding Path=deptno, Source={StaticResource deptempViewSource}}">
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>
